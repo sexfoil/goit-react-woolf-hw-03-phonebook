@@ -4,10 +4,28 @@ import Filter from './Filter/Filter';
 import ContactList from './ContactList/ContactList';
 
 class App extends Component {
+  #LS_CONTACTS_KEY = 'contacts';
+
   state = {
     contacts: [],
     filter: '',
   };
+
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(this.#LS_CONTACTS_KEY);
+    if (savedContacts) {
+      this.setState({ contacts: JSON.parse(savedContacts) });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts.length !== prevState.contacts.length) {
+      localStorage.setItem(
+        this.#LS_CONTACTS_KEY,
+        JSON.stringify(this.state.contacts)
+      );
+    }
+  }
 
   addContact = contact => {
     if (this.hasContact(contact.name)) {
